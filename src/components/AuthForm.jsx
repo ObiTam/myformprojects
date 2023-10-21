@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import firebaseConfig from '../config/firebase';
-import styles from '../styles.module.css'
+import eyeIcon from '../icons/visible.svg';
+import eyeStrikeIcon from '../icons/not-visible.svg';
+import styles from '../styles.module.css';
 
 const AuthForm = ({ login }) => {
   const [isSignedUp, setSignedUp] = useState(true)
@@ -11,6 +13,14 @@ const AuthForm = ({ login }) => {
   }
   const [formData, setData] = useState(defaultData)
   const [confirmPassword, setPassword] = useState('')
+
+  const [visibility, setVisibility] = useState({ password: false, confirmPassword: false })
+
+  const changeVisibity = (field) => {
+    const newBools = { ...visibility }
+    newBools[field] = !visibility[field]
+    setVisibility(newBools)
+  }
 
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -74,14 +84,32 @@ const AuthForm = ({ login }) => {
         <label className={styles['authFormLabel']}>
           UserID:
         </label>
-        <input type="text" value={formData.userID} alt={'userID'} placeholder={`${isSignedUp ? 'Input' : 'Set your'} UserID`} onChange={(e) => { handleChange('userID', e.target.value) }} />
+        <input
+          type="text"
+          value={formData.userID}
+          alt={'userID'}
+          placeholder={`${isSignedUp ? 'Input' : 'Set your'} UserID`}
+          onChange={(e) => { handleChange('userID', e.target.value) }}
+        />
       </div>
 
       <div className={styles['authFormElement']}>
         <label className={styles['authFormLabel']}>
           Password:
         </label>
-        <input type="text" value={formData.password} alt={'password'} placeholder={`${isSignedUp ? 'Input' : 'Set your'} Password`} onChange={(e) => { handleChange('password', e.target.value) }} />
+        <input
+          className={styles['passwordInput']}
+          type={visibility['password'] ? 'text' : 'password'}
+          value={formData.password}
+          alt={'password'}
+          placeholder={`${isSignedUp ? 'Input' : 'Set your'} Password`}
+          onChange={(e) => { handleChange('password', e.target.value) }}
+        />
+        <img
+          className={styles['eyes']}
+          src={visibility['password'] ? eyeStrikeIcon : eyeIcon} alt="logout"
+          onClick={(e) => changeVisibity('password')}
+        />
       </div>
 
       {
@@ -90,7 +118,19 @@ const AuthForm = ({ login }) => {
           <label className={styles['authFormLabel']}>
             Confirm Password:
           </label>
-          <input type="text" value={confirmPassword} alt={'confirm password'} placeholder='Confirm your Password' onChange={(e) => { handleChange('confirmPassword', e.target.value) }} />
+          <input
+            className={styles['passwordInput']}
+            type={visibility['confirmPassword'] ? 'text' : 'password'}
+            value={confirmPassword}
+            alt={'confirm password'}
+            placeholder='Confirm your Password'
+            onChange={(e) => { handleChange('confirmPassword', e.target.value) }}
+          />
+          <img
+            className={styles['eyes']}
+            src={visibility['confirmPassword'] ? eyeStrikeIcon : eyeIcon} alt="logout"
+            onClick={(e) => changeVisibity('confirmPassword')}
+          />
         </div>
       }
 
