@@ -66,8 +66,6 @@ const AuthForm = ({ login, user, setUser }) => {
             setSuccessMessage('succesful login')
           })
           .catch((error) => {
-            console.error(error.message);
-
             const errorCode = error.code;
             let errorMessage = error.message;
 
@@ -116,8 +114,6 @@ const AuthForm = ({ login, user, setUser }) => {
             setSuccessMessage('succesful signup')
           })
           .catch((error) => {
-            console.error(error.message);
-
             const errorCode = error.code;
             let errorMessage = error.message;
 

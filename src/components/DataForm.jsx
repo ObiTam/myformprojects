@@ -23,7 +23,6 @@ const DataForm = ({ logout, setUser }) => {
         setUser(null)
         logout()
       }).catch((error) => {
-        console.error(error.message)
         setSuccessMessage('');
         setErrorMessage('Logout was unsuccessful')
       });
@@ -84,8 +83,6 @@ const DataForm = ({ logout, setUser }) => {
       setSuccessMessage('Form data saved successfully!');
       setErrorMessage('');
     } catch (error) {
-      console.log(error)
-      console.error('Error saving data: ', error.message);
       setSuccessMessage('');
       setErrorMessage('Failed to save form data.');
     }
