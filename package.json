@@ -12,6 +12,7 @@
   "author": "Tamunomiete Obi",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.3.1",
     "dotenv-webpack": "^8.0.1",
     "firebase": "^10.5.0",
     "git": "^0.1.5",

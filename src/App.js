@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import styles from './styles.module.css'
 import AuthForm from './components/AuthForm';
 import MainForm from './components/MainForm';
+import 'dotenv/config'
 
 function App() {
     const [loggedIn, setLoggedIn] = useState(false)
