@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import SelectColor from './SelectColor'
 import SelectFruits from './SelectFruits';
+import closeIcon from '../icons/close.svg'
 import firebaseConfig from '../config/firebase';
 import styles from '../styles.module.css'
 
-const MainForm = () => {
+const MainForm = ({ logout }) => {
   const defaultData = {
     name: '',
     color: '',
@@ -61,7 +62,8 @@ const MainForm = () => {
   //   fetchData();
   // }, []);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     // try {
     //   const formData = {
     //     name,
@@ -82,38 +84,34 @@ const MainForm = () => {
   };
 
   return (
-    <>
-      <h1>
-        Welcome to my Form Project!
-      </h1>
-      <form className={styles['mainForm']}>
-        <div className={styles['formElement']}>
-          <label>
-            Name:
-          </label>
-          <input type="text" value={formData.name} alt={'name'} placeholder='Input your name' onChange={(e) => { handleChange('name', e.target.value) }} />
-        </div>
+    <form className={styles['mainForm']}>
+      <img className={styles['closeButton']} src={closeIcon} alt="logout" onClick={logout} />
+      <div className={styles['formElement']}>
+        <label className={styles['mainFormLabel']}>
+          Name:
+        </label>
+        <input type="text" value={formData.name} alt={'name'} placeholder='Input your name' onChange={(e) => { handleChange('name', e.target.value) }} />
+      </div>
 
-        <div className={styles['formElement']}>
-          <label>
-            Color:
-          </label>
-          <SelectColor color={formData.color} colors={colors} handleChange={handleChange} />
-        </div>
+      <div className={styles['formElement']}>
+        <label className={styles['mainFormLabel']}>
+          Color:
+        </label>
+        <SelectColor color={formData.color} colors={colors} handleChange={handleChange} />
+      </div>
 
-        <div className={styles['formElement']}>
-          <label>
-            Fruits:
-          </label>
-          <SelectFruits selectedFruits={formData.fruits} fruits={fruits} handleChange={handleChange} />
-        </div>
+      <div className={styles['formElement']}>
+        <label className={styles['mainFormLabel']}>
+          Fruits:
+        </label>
+        <SelectFruits selectedFruits={formData.fruits} fruits={fruits} handleChange={handleChange} />
+      </div>
 
-        <button onClick={handleSubmit}>Submit</button>
+      <button onClick={handleSubmit}>Submit</button>
 
-        {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      </form >
-    </>
+      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+    </form >
   );
 };
 
