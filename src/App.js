@@ -1,11 +1,13 @@
 // src/App.js
 import React, { useState } from 'react';
-import MainForm from './components/MainForm';
 import styles from './styles.module.css'
 import AuthForm from './components/AuthForm';
+import MainForm from './components/MainForm';
 
 function App() {
     const [loggedIn, setLoggedIn] = useState(false)
+    const [user, setUser] = useState(null)
+
     return (
         <div className={styles['app']}>
             <h1>
@@ -13,9 +15,9 @@ function App() {
             </h1>
             {
                 loggedIn ?
-                    <MainForm logout={() => setLoggedIn(false)} />
+                    <MainForm user={user} logout={() => setLoggedIn(false)} />
                     :
-                    <AuthForm login={() => setLoggedIn(true)} />
+                    <AuthForm user={user} setUser={setUser} login={() => setLoggedIn(true)} />
             }
         </div>
     )

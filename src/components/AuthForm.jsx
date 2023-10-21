@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import eyeIcon from '../icons/visible.svg';
 import eyeStrikeIcon from '../icons/not-visible.svg';
 import styles from '../styles.module.css';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
-const AuthForm = ({ login }) => {
+const AuthForm = ({ login, user, setUser }) => {
   const [isSignedUp, setSignedUp] = useState(true)
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    setUser(null)
+    setErrorMessage('')
+    setSuccessMessage('')
+  }, [isSignedUp])
 
   const defaultData = {
-    userID: '',
+    email: '',
     password: ''
   }
   const [authData, setData] = useState(defaultData)
@@ -23,9 +32,6 @@ const AuthForm = ({ login }) => {
     setVisibility(newBools)
   }
 
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-
   const handleChange = (field, value) => {
     if (field === 'confirmPassword') {
       setPassword(value)
@@ -37,15 +43,48 @@ const AuthForm = ({ login }) => {
     }
   }
 
+  const auth = getAuth();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setErrorMessage('')
+    setSuccessMessage('')
+
     try {
-      const docRef = await addDoc(collection(db, "authentication data"), authData);
-      console.log("Document written with ID: ", docRef.id);
-      login()
-      setData(defaultData)
+      if (isSignedUp) {
+        await signInWithEmailAndPassword(auth, authData.email, authData.password)
+          .then((userCredential) => {
+            setUser(userCredential.user)
+            login()
+            setSuccessMessage('succesful login')
+          })
+          .catch((error) => {
+            console.error(error.message);
+            throw new Error('Invalid Email/Password')
+          });
+      }
+      else {
+        if (authData.password.length < 8) {
+          throw new Error('Password must be atleast 8 characters')
+        }
+        if (authData.password !== confirmPassword) {
+          throw new Error('Passwords do not match')
+        }
+        createUserWithEmailAndPassword(auth, authData.email, authData.password)
+          .then((userCredential) => {
+            setUser(userCredential.user)
+            login()
+            setSuccessMessage('succesful signup')
+          })
+          .catch((error) => {
+            console.error(error.message);
+            throw new Error("Couldn't sign you up at this time")
+          });
+      }
+      // setData(defaultData)
     } catch (e) {
-      console.error("Error adding document: ", e);
+      setErrorMessage(e.message)
     }
   };
 
@@ -53,14 +92,14 @@ const AuthForm = ({ login }) => {
     <form className={styles['authForm']}>
       <div className={styles['authFormElement']}>
         <label className={styles['authFormLabel']}>
-          UserID:
+          Email:
         </label>
         <input
           type="text"
-          value={authData.userID}
-          alt={'userID'}
-          placeholder={`${isSignedUp ? 'Input' : 'Set your'} UserID`}
-          onChange={(e) => { handleChange('userID', e.target.value) }}
+          value={authData.email}
+          alt={'Email'}
+          placeholder='Input your Email'
+          onChange={(e) => { handleChange('email', e.target.value) }}
         />
       </div>
 
@@ -116,16 +155,20 @@ const AuthForm = ({ login }) => {
 
       <div className={styles['signupText']}>
         {
+          errorMessage &&
+          <p style={{ color: 'red' }}>{errorMessage}</p>
+        }
+        {
+          successMessage &&
+          <p style={{ color: 'green' }}>{successMessage}</p>
+        }
+        {
           isSignedUp ?
             <>Don't have an account? <span onClick={() => setSignedUp(false)}>SignUp</span></>
             :
             <>Already have an account? <span onClick={() => setSignedUp(true)}>LogIn</span></>
         }
       </div>
-
-
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
     </form >
   );
 };

@@ -2,19 +2,31 @@ import React, { useState } from 'react';
 import SelectColor from './SelectColor'
 import SelectFruits from './SelectFruits';
 import closeIcon from '../icons/close.svg'
-import firebaseConfig from '../config/firebase';
 import styles from '../styles.module.css'
+import { getAuth, signOut } from "firebase/auth";
 
-const MainForm = ({ logout }) => {
+
+const MainForm = ({ logout, user, setUser }) => {
+  console.log(user)
+  const auth = getAuth();
+
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleLogout = () => {
+    signOut(auth).then(() => {
+      logout()
+    }).catch((error) => {
+      setErrorMessage('Logout was unsuccessful')
+    });
+  }
+
   const defaultData = {
     name: '',
     color: '',
     fruits: []
   }
   const [formData, setData] = useState(defaultData)
-
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
 
   const colors = ["Red", "Blue", "Green"]
   const fruits = ["Apple", "Banana", "Cherry", "Date"]
@@ -85,7 +97,7 @@ const MainForm = ({ logout }) => {
 
   return (
     <form className={styles['mainForm']}>
-      <img className={styles['closeButton']} src={closeIcon} alt="logout" onClick={logout} />
+      <img className={styles['closeButton']} src={closeIcon} alt="logout" onClick={handleLogout} />
       <div className={styles['formElement']}>
         <label className={styles['mainFormLabel']}>
           Name:
