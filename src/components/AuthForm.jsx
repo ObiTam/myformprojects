@@ -61,7 +61,33 @@ const AuthForm = ({ login, user, setUser }) => {
           })
           .catch((error) => {
             console.error(error.message);
-            throw new Error('Invalid Email/Password')
+
+            const errorCode = error.code;
+            let errorMessage = error.message;
+
+            switch (errorCode) {
+              case "auth/invalid-email":
+                errorMessage = "Invalid Email/Password";
+                break;
+
+              case "auth/user-not-found":
+                errorMessage = "Invalid Email/Password";
+                break;
+
+              case "auth/wrong-password":
+                errorMessage = "Invalid Email/Password";
+                break;
+
+              case "auth/invalid-login-credentials":
+                errorMessage = "Invalid Email/Password";
+                break;
+
+              default:
+                errorMessage = "Couldn't log you in at this time.";
+                break;
+            }
+
+            throw new Error(errorMessage);
           });
       }
       else {
@@ -71,7 +97,7 @@ const AuthForm = ({ login, user, setUser }) => {
         if (authData.password !== confirmPassword) {
           throw new Error('Passwords do not match')
         }
-        createUserWithEmailAndPassword(auth, authData.email, authData.password)
+        await createUserWithEmailAndPassword(auth, authData.email, authData.password)
           .then((userCredential) => {
             setUser(userCredential.user)
             login()
@@ -79,7 +105,20 @@ const AuthForm = ({ login, user, setUser }) => {
           })
           .catch((error) => {
             console.error(error.message);
-            throw new Error("Couldn't sign you up at this time")
+
+            const errorCode = error.code;
+            let errorMessage = error.message;
+
+            switch (errorCode) {
+              case "auth/email-already-in-use":
+                errorMessage = "Email is already in use.";
+                break;
+
+              default:
+                errorMessage = "Couldn't sign you up at this time";
+                break;
+            }
+            throw new Error(errorMessage)
           });
       }
       // setData(defaultData)
