@@ -178,7 +178,7 @@ select,
 .eyes {
     position: absolute;
     right: 10px;
-    top: 35px;
+    top: 37px;
     cursor: pointer;
 }
 
@@ -236,7 +236,7 @@ button:hover {
     }
 
     .eyes {
-        top: 30px;
+        top: 32px;
     }
 }
 
