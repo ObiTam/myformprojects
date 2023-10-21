@@ -1,12 +1,13 @@
 import React, { useLayoutEffect, useState } from 'react';
 import SelectColor from './SelectColor'
 import SelectFruits from './SelectFruits';
+import Spinner from './Spinner';
 import closeIcon from '../icons/close.svg'
 import styles from '../styles.module.css'
 import { getAuth, signOut } from "firebase/auth";
 import { getDatabase, ref, set, onValue, off } from "firebase/database";
 
-const MainForm = ({ logout, setUser }) => {
+const DataForm = ({ logout, setUser }) => {
   const auth = getAuth();
   const db = getDatabase();
   const userId = auth.currentUser?.uid;
@@ -14,7 +15,7 @@ const MainForm = ({ logout, setUser }) => {
 
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true); 
 
   const handleLogout = () => {
     signOut(auth)
@@ -62,7 +63,7 @@ const MainForm = ({ logout, setUser }) => {
 
   useLayoutEffect(() => {
     const handleData = (snapshot) => {
-      const newData = snapshot.val() || defaultData;
+      const newData = snapshot.val() || formData;
       setData(newData);
       setLoading(false); // Set loading to false once data is loaded
     };
@@ -90,30 +91,29 @@ const MainForm = ({ logout, setUser }) => {
     }
   };
 
-  // Conditionally render based on loading state
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
   return (
-    <form className={styles['mainForm']}>
+    <form className={styles['dataForm']}>
+      {
+        loading &&
+        <Spinner />
+      }
       <img className={styles['closeButton']} src={closeIcon} alt="logout" onClick={handleLogout} />
       <div className={styles['formElement']}>
-        <label className={styles['mainFormLabel']}>
+        <label className={styles['dataFormLabel']}>
           Name:
         </label>
         <input type="text" value={formData.name} alt={'name'} placeholder='Input your name' onChange={(e) => { handleChange('name', e.target.value) }} />
       </div>
 
       <div className={styles['formElement']}>
-        <label className={styles['mainFormLabel']}>
+        <label className={styles['dataFormLabel']}>
           Color:
         </label>
         <SelectColor color={formData.color} colors={colors} handleChange={handleChange} />
       </div>
 
       <div className={styles['formElement']}>
-        <label className={styles['mainFormLabel']}>
+        <label className={styles['dataFormLabel']}>
           Fruits:
         </label>
         <SelectFruits selectedFruits={formData.fruits} fruits={fruits} handleChange={handleChange} />
@@ -128,4 +128,4 @@ const MainForm = ({ logout, setUser }) => {
   );
 };
 
-export default MainForm;
+export default DataForm;
