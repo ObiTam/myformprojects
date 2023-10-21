@@ -13,7 +13,8 @@ h1 {
     text-align: center;
 }
 
-.mainForm {
+.mainForm,
+.authForm {
     font-size: 1.2rem;
     font-weight: normal;
     line-height: 1.6;
@@ -25,6 +26,17 @@ h1 {
     display: flex;
     gap: 10px;
     flex-direction: column;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+
+.closeButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 10px;
+    cursor: pointer;
 }
 
 .formElement {
@@ -34,14 +46,28 @@ h1 {
     width: 305px;
 }
 
+.authFormElement {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+}
+
 .container {
     position: relative;
     flex: 1;
 }
 
-label {
+.mainFormLabel {
     display: block;
     width: 70px;
+    font-size: 1rem;
+    font-weight: bolder;
+}
+
+.authFormLabel {
+    display: block;
+    font-size: 1rem;
+    font-weight: bolder;
 }
 
 input,
@@ -163,6 +189,39 @@ button:hover {
     color: white;
 }
 
+.signupText {
+    font-size: 0.9rem;
+    font-weight: normal;
+    line-height: 1.2;
+    padding: 10px;
+    margin-top: -8px;
+    text-align: center;
+}
+
+.signupText span {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+@media only screen and (max-width: 550px) {
+    .authForm {
+        font-size: 0.9rem;
+        font-weight: normal;
+        line-height: 1.2;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5;
+    }
+
+    .authFormElement {
+        width: 100%;
+    }
+}
+
 @media only screen and (max-width: 500px) {
     .app {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana;
@@ -172,6 +231,10 @@ button:hover {
         font-size: 1.3rem;
         font-weight: bold;
         line-height: 1.3;
+    }
+
+    .closeButton {
+        margin: 0px;
     }
 
     .mainForm {
@@ -185,7 +248,7 @@ button:hover {
         width: 100%;
     }
 
-    label {
+    .mainFormLabel {
         width: 50px;
     }
 }
