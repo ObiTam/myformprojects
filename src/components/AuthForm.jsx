@@ -153,7 +153,7 @@ const AuthForm = ({ login, user, setUser }) => {
         }
       </button>
 
-      <div className={styles['signupText']}>
+      <div className={styles['otherText']}>
         {
           errorMessage &&
           <p style={{ color: 'red' }}>{errorMessage}</p>
@@ -164,9 +164,9 @@ const AuthForm = ({ login, user, setUser }) => {
         }
         {
           isSignedUp ?
-            <>Don't have an account? <span onClick={() => setSignedUp(false)}>SignUp</span></>
+            <p>Don't have an account? <span onClick={() => setSignedUp(false)}>SignUp</span></p>
             :
-            <>Already have an account? <span onClick={() => setSignedUp(true)}>LogIn</span></>
+            <p>Already have an account? <span onClick={() => setSignedUp(true)}>LogIn</span></p>
         }
       </div>
     </form >

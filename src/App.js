@@ -15,7 +15,7 @@ function App() {
             </h1>
             {
                 loggedIn ?
-                    <MainForm user={user} logout={() => setLoggedIn(false)} />
+                    <MainForm user={user} setUser={setUser} logout={() => setLoggedIn(false)} />
                     :
                     <AuthForm user={user} setUser={setUser} login={() => setLoggedIn(true)} />
             }

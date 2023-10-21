@@ -1,24 +1,31 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import SelectColor from './SelectColor'
 import SelectFruits from './SelectFruits';
 import closeIcon from '../icons/close.svg'
 import styles from '../styles.module.css'
 import { getAuth, signOut } from "firebase/auth";
+import { getDatabase, ref, set, onValue, off } from "firebase/database";
 
-
-const MainForm = ({ logout, user, setUser }) => {
-  console.log(user)
+const MainForm = ({ logout, setUser }) => {
   const auth = getAuth();
+  const db = getDatabase();
+  const userId = auth.currentUser?.uid;
+  const userRef = ref(db, 'formData/' + userId);
 
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(true); // Add loading state
 
   const handleLogout = () => {
-    signOut(auth).then(() => {
-      logout()
-    }).catch((error) => {
-      setErrorMessage('Logout was unsuccessful')
-    });
+    signOut(auth)
+      .then(() => {
+        setUser(null)
+        logout()
+      }).catch((error) => {
+        console.error(error.message)
+        setSuccessMessage('');
+        setErrorMessage('Logout was unsuccessful')
+      });
   }
 
   const defaultData = {
@@ -53,47 +60,40 @@ const MainForm = ({ logout, user, setUser }) => {
     setData(newData)
   }
 
-  // useEffect(() => {
-  //   // Read data from Firestore on component mount
-  //   const fetchData = async () => {
-  //     try {
-  //       const docRef = firebaseConfig.firestore().collection('formData').doc('exampleUserId');
-  //       const doc = await docRef.get();
+  useLayoutEffect(() => {
+    const handleData = (snapshot) => {
+      const newData = snapshot.val() || defaultData;
+      setData(newData);
+      setLoading(false); // Set loading to false once data is loaded
+    };
 
-  //       if (doc.exists) {
-  //         const data = doc.data();
-  //         setName(data.name || '');
-  //         setColor(data.color || '');
-  //         setFruits(data.fruits || []);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching document: ', error);
-  //     }
-  //   };
+    onValue(userRef, handleData);
 
-  //   fetchData();
-  // }, []);
+    return () => {
+      off(userRef, handleData);
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    // try {
-    //   const formData = {
-    //     name,
-    //     color,
-    //     fruits,
-    //   };
+    e.preventDefault();
+    try {
+      // Update the user data
+      await set(userRef, formData);
 
-    //   const docRef = firebaseConfig.firestore().collection('formData').doc('exampleUserId');
-    //   await docRef.set(formData);
-
-    //   setSuccessMessage('Form data saved successfully!');
-    //   setErrorMessage('');
-    // } catch (error) {
-    //   console.error('Error saving document: ', error);
-    //   setSuccessMessage('');
-    //   setErrorMessage('Failed to save form data.');
-    // }
+      setSuccessMessage('Form data saved successfully!');
+      setErrorMessage('');
+    } catch (error) {
+      console.log(error)
+      console.error('Error saving data: ', error.message);
+      setSuccessMessage('');
+      setErrorMessage('Failed to save form data.');
+    }
   };
+
+  // Conditionally render based on loading state
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <form className={styles['mainForm']}>
@@ -120,9 +120,10 @@ const MainForm = ({ logout, user, setUser }) => {
       </div>
 
       <button onClick={handleSubmit}>Submit</button>
-
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+      <div className={styles['otherText']}>
+        {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+      </div>
     </form >
   );
 };

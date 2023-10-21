@@ -202,18 +202,21 @@ button:hover {
     color: white;
 }
 
-.signupText {
+.otherText {
     font-size: 0.9rem;
     font-weight: normal;
     line-height: 1.2;
-    padding: 10px;
-    margin-top: -8px;
+    margin-top: -18px;
     text-align: center;
 }
 
-.signupText span {
+.otherText span {
     cursor: pointer;
     text-decoration: underline;
+}
+
+.otherText p {
+    padding: 0px;
 }
 
 @media only screen and (max-width: 550px) {
