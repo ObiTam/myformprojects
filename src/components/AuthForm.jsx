@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import firebaseConfig from '../config/firebase';
+import { db } from '../firebase';
+import { collection, addDoc, getDocs } from "firebase/firestore";
 import eyeIcon from '../icons/visible.svg';
 import eyeStrikeIcon from '../icons/not-visible.svg';
 import styles from '../styles.module.css';
@@ -11,7 +12,7 @@ const AuthForm = ({ login }) => {
     userID: '',
     password: ''
   }
-  const [formData, setData] = useState(defaultData)
+  const [authData, setData] = useState(defaultData)
   const [confirmPassword, setPassword] = useState('')
 
   const [visibility, setVisibility] = useState({ password: false, confirmPassword: false })
@@ -30,52 +31,22 @@ const AuthForm = ({ login }) => {
       setPassword(value)
     }
     else {
-      const newData = { ...formData }
+      const newData = { ...authData }
       newData[field] = value
       setData(newData)
     }
   }
 
-  // useEffect(() => {
-  //   // Read data from Firestore on component mount
-  //   const fetchData = async () => {
-  //     try {
-  //       const docRef = firebaseConfig.firestore().collection('formData').doc('exampleUserId');
-  //       const doc = await docRef.get();
-
-  //       if (doc.exists) {
-  //         const data = doc.data();
-  //         setName(data.name || '');
-  //         setColor(data.color || '');
-  //         setFruits(data.fruits || []);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching document: ', error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
-  const handleSubmit = async () => {
-    // try {
-    //   const formData = {
-    //     name,
-    //     color,
-    //     fruits,
-    //   };
-
-    //   const docRef = firebaseConfig.firestore().collection('formData').doc('exampleUserId');
-    //   await docRef.set(formData);
-
-    //   setSuccessMessage('Form data saved successfully!');
-    //   setErrorMessage('');
-    // } catch (error) {
-    //   console.error('Error saving document: ', error);
-    //   setSuccessMessage('');
-    //   setErrorMessage('Failed to save form data.');
-    // }
-    login()
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const docRef = await addDoc(collection(db, "authentication data"), authData);
+      console.log("Document written with ID: ", docRef.id);
+      login()
+      setData(defaultData)
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   };
 
   return (
@@ -86,7 +57,7 @@ const AuthForm = ({ login }) => {
         </label>
         <input
           type="text"
-          value={formData.userID}
+          value={authData.userID}
           alt={'userID'}
           placeholder={`${isSignedUp ? 'Input' : 'Set your'} UserID`}
           onChange={(e) => { handleChange('userID', e.target.value) }}
@@ -100,7 +71,7 @@ const AuthForm = ({ login }) => {
         <input
           className={styles['passwordInput']}
           type={visibility['password'] ? 'text' : 'password'}
-          value={formData.password}
+          value={authData.password}
           alt={'password'}
           placeholder={`${isSignedUp ? 'Input' : 'Set your'} Password`}
           onChange={(e) => { handleChange('password', e.target.value) }}
