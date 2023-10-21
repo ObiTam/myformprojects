@@ -222,6 +222,7 @@ button:hover {
         font-weight: normal;
         line-height: 1.2;
         padding: 20px;
+        width: 80%;
     }
 
     h1 {
