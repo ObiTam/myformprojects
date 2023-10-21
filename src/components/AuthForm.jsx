@@ -53,6 +53,12 @@ const AuthForm = ({ login, user, setUser }) => {
 
     try {
       if (isSignedUp) {
+        if (authData.email.length === 0) {
+          throw new Error('Email is required')
+        }
+        if (authData.password.length === 0) {
+          throw new Error('Password is required')
+        }
         await signInWithEmailAndPassword(auth, authData.email, authData.password)
           .then((userCredential) => {
             setUser(userCredential.user)
@@ -91,6 +97,12 @@ const AuthForm = ({ login, user, setUser }) => {
           });
       }
       else {
+        if (authData.email.length === 0) {
+          throw new Error('Email is required')
+        }
+        if (authData.password.length === 0) {
+          throw new Error('Password is required')
+        }
         if (authData.password.length < 8) {
           throw new Error('Password must be atleast 8 characters')
         }
@@ -110,12 +122,16 @@ const AuthForm = ({ login, user, setUser }) => {
             let errorMessage = error.message;
 
             switch (errorCode) {
+              case "auth/invalid-email":
+                errorMessage = "Use a valid email address.";
+                break;
+
               case "auth/email-already-in-use":
                 errorMessage = "Email is already in use.";
                 break;
 
               default:
-                errorMessage = "Couldn't sign you up at this time";
+                errorMessage = "Couldn't sign you up at this time.";
                 break;
             }
             throw new Error(errorMessage)
