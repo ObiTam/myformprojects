@@ -1,88 +1,119 @@
-// src/components/Form.js
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import SelectColor from './SelectColor'
+import SelectFruits from './SelectFruits';
 import firebaseConfig from '../config/firebase';
+import styles from '../styles.module.css'
 
 const MainForm = () => {
-  const [name, setName] = useState('');
-  const [color, setColor] = useState('');
-  const [fruits, setFruits] = useState([]);
+  const defaultData = {
+    name: '',
+    color: '',
+    fruits: []
+  }
+  const [formData, setData] = useState(defaultData)
+
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  useEffect(() => {
-    // Read data from Firestore on component mount
-    const fetchData = async () => {
-      try {
-        const docRef = firebaseConfig.firestore().collection('formData').doc('exampleUserId');
-        const doc = await docRef.get();
+  const colors = ["Red", "Blue", "Green"]
+  const fruits = ["Apple", "Banana", "Cherry", "Date"]
 
-        if (doc.exists) {
-          const data = doc.data();
-          setName(data.name || '');
-          setColor(data.color || '');
-          setFruits(data.fruits || []);
-        }
-      } catch (error) {
-        console.error('Error fetching document: ', error);
+  const handleChange = (field, value) => {
+    const newData = { ...formData }
+    if (field === 'name') {
+      newData[field] = value
+    }
+    else if (field === 'color') {
+      newData[field] = value
+    }
+    else if (field === 'fruits') {
+      if (formData[field].includes(value)) {
+        newData[field] = formData[field].filter(fruit => fruit !== value)
       }
-    };
+      else {
+        newData[field] = [...formData[field], value];
+      }
+    }
+    else {
+      console.error('Invalid Operation')
+    }
+    setData(newData)
+  }
 
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   // Read data from Firestore on component mount
+  //   const fetchData = async () => {
+  //     try {
+  //       const docRef = firebaseConfig.firestore().collection('formData').doc('exampleUserId');
+  //       const doc = await docRef.get();
+
+  //       if (doc.exists) {
+  //         const data = doc.data();
+  //         setName(data.name || '');
+  //         setColor(data.color || '');
+  //         setFruits(data.fruits || []);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching document: ', error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
 
   const handleSubmit = async () => {
-    try {
-      const formData = {
-        name,
-        color,
-        fruits,
-      };
+    // try {
+    //   const formData = {
+    //     name,
+    //     color,
+    //     fruits,
+    //   };
 
-      const docRef = firebaseConfig.firestore().collection('formData').doc('exampleUserId');
-      await docRef.set(formData);
+    //   const docRef = firebaseConfig.firestore().collection('formData').doc('exampleUserId');
+    //   await docRef.set(formData);
 
-      setSuccessMessage('Form data saved successfully!');
-      setErrorMessage('');
-    } catch (error) {
-      console.error('Error saving document: ', error);
-      setSuccessMessage('');
-      setErrorMessage('Failed to save form data.');
-    }
+    //   setSuccessMessage('Form data saved successfully!');
+    //   setErrorMessage('');
+    // } catch (error) {
+    //   console.error('Error saving document: ', error);
+    //   setSuccessMessage('');
+    //   setErrorMessage('Failed to save form data.');
+    // }
   };
 
   return (
-    <div>
-      <h1>Form</h1>
-      <label>
-        Name:
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-      </label>
-      <br />
-      <label>
-        Color:
-        <select value={color} onChange={(e) => setColor(e.target.value)}>
-          <option value="">Select Color</option>
-          <option value="Red">Red</option>
-          <option value="Blue">Blue</option>
-          <option value="Green">Green</option>
-        </select>
-      </label>
-      <br />
-      <label>
-        Fruits:
-        <select multiple value={fruits} onChange={(e) => setFruits(Array.from(e.target.selectedOptions, (option) => option.value))}>
-          <option value="Apple">Apple</option>
-          <option value="Banana">Banana</option>
-          <option value="Cherry">Cherry</option>
-          <option value="Date">Date</option>
-        </select>
-      </label>
-      <br />
-      <button onClick={handleSubmit}>Submit</button>
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-    </div>
+    <>
+      <h1>
+        Welcome to my Form Project!
+      </h1>
+      <form className={styles['mainForm']}>
+        <div className={styles['formElement']}>
+          <label>
+            Name:
+          </label>
+          <input type="text" value={formData.name} alt={'name'} placeholder='Input your name' onChange={(e) => { handleChange('name', e.target.value) }} />
+        </div>
+
+        <div className={styles['formElement']}>
+          <label>
+            Color:
+          </label>
+          <SelectColor color={formData.color} colors={colors} handleChange={handleChange} />
+        </div>
+
+        <div className={styles['formElement']}>
+          <label>
+            Fruits:
+          </label>
+          <SelectFruits selectedFruits={formData.fruits} fruits={fruits} handleChange={handleChange} />
+        </div>
+
+        <button onClick={handleSubmit}>Submit</button>
+
+        {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+      </form >
+    </>
   );
 };
 
