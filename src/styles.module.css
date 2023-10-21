@@ -41,9 +41,9 @@ h1 {
 
 .formElement {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: space-between;
-    width: 305px;
+    width: 400px;
 }
 
 .authFormElement {
@@ -60,15 +60,16 @@ h1 {
 
 .mainFormLabel {
     display: block;
-    width: 70px;
     font-size: 1rem;
     font-weight: bolder;
+    margin-bottom: 2px;
 }
 
 .authFormLabel {
     display: block;
     font-size: 1rem;
     font-weight: bolder;
+    margin-bottom: 2px;
 }
 
 input,
@@ -216,7 +217,7 @@ button:hover {
 }
 
 @media only screen and (max-width: 550px) {
-    .authForm {
+    .authForm, .mainForm {
         font-size: 0.9rem;
         font-weight: normal;
         line-height: 1.2;
@@ -229,7 +230,8 @@ button:hover {
         line-height: 1.5;
     }
 
-    .authFormElement {
+    .authFormElement,
+    .formElement {
         width: 100%;
     }
 
@@ -251,20 +253,5 @@ button:hover {
 
     .closeButton {
         margin: 0px;
-    }
-
-    .mainForm {
-        font-size: 0.9rem;
-        font-weight: normal;
-        line-height: 1.2;
-        padding: 20px;
-    }
-
-    .formElement {
-        width: 100%;
-    }
-
-    .mainFormLabel {
-        width: 50px;
     }
 }
