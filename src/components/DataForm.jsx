@@ -63,8 +63,12 @@ const DataForm = ({ logout, setUser }) => {
     const handleData = (snapshot) => {
       const newData = snapshot.val() || formData;
 
-      // Check if 'fruits' property exists, otherwise initialize it as an empty array
-      newData.fruits = newData.fruits || [];
+      // Initialize properties from defaultData if they don't exist
+      for (const key in defaultData) {
+        if (!(key in newData)) {
+          newData[key] = defaultData[key];
+        }
+      }
 
       setData(newData);
       setLoading(false); // Set loading to false once data is loaded
