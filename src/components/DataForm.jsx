@@ -39,6 +39,7 @@ const DataForm = ({ logout, setUser }) => {
   const fruits = ["Apple", "Banana", "Cherry", "Date"]
 
   const handleChange = (field, value) => {
+    const newData = {...formData}
     if (field === 'name') {
       newData[field] = value
     }
