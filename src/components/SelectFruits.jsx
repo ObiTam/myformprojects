@@ -35,7 +35,7 @@ const SelectFruit = ({ selectedFruits, fruits, handleChange }) => {
                         :
                         <div className={styles['selectPills']} >
                             {
-                                selectedFruits.map((fruit, index) => (
+                                selectedFruits?.map((fruit, index) => (
                                     <div className={styles['selectPill']} key={index} onClick={(e) => { e.stopPropagation(); handleChange('fruits', fruit); }} >
                                         {fruit}
                                         <img src={closeIcon} alt="delete fruit" />
@@ -50,8 +50,8 @@ const SelectFruit = ({ selectedFruits, fruits, handleChange }) => {
                 show &&
                 <div className={styles['selectDropdown']} ref={dropdownRef}>
                     {
-                        fruits.map((fruit, index) => (
-                            <div className={`${selectedFruits.includes(fruit) ? styles['selected'] : styles['unselected']}`} key={index} onClick={() => handleSelectFruit(fruit)}>
+                        fruits?.map((fruit, index) => (
+                            <div className={`${selectedFruits?.includes(fruit) ? styles['selected'] : styles['unselected']}`} key={index} onClick={() => handleSelectFruit(fruit)}>
                                 {fruit}
                             </div>
                         ))

@@ -15,7 +15,7 @@ const DataForm = ({ logout, setUser }) => {
 
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
   const handleLogout = () => {
     signOut(auth)
@@ -39,7 +39,6 @@ const DataForm = ({ logout, setUser }) => {
   const fruits = ["Apple", "Banana", "Cherry", "Date"]
 
   const handleChange = (field, value) => {
-    const newData = { ...formData }
     if (field === 'name') {
       newData[field] = value
     }
@@ -63,6 +62,10 @@ const DataForm = ({ logout, setUser }) => {
   useLayoutEffect(() => {
     const handleData = (snapshot) => {
       const newData = snapshot.val() || formData;
+
+      // Check if 'fruits' property exists, otherwise initialize it as an empty array
+      newData.fruits = newData.fruits || [];
+
       setData(newData);
       setLoading(false); // Set loading to false once data is loaded
     };
